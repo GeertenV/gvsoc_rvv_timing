@@ -21,12 +21,15 @@ class Soc(gvsoc.systree.Component):
 
         binary = args.binary
 
-        ico = interco.router.Router(self, 'ico')#,bandwidth=512, latency=1)
+        ico = interco.router.Router(self, 'ico')#,bandwidth=512)#, latency=1)
 
-        mem = memory.memory.Memory(self, 'mem', size=0x1000000)
+        mem = memory.memory.Memory(self, 'mem', size=0x10000)#, width_log2= 1)
+        mem2 = memory.memory.Memory(self, 'mem2', size=0x10000)
         
-        ico.add_mapping('mem', base=0x00000000, remove_offset=0x00000000, size=0x1000000)
+        ico.add_mapping('mem', base=0x00000000, remove_offset=0x00000000, size=0x10000, latency = 1)
+        ico.add_mapping('mem2', base=0x10000000, remove_offset=0x10000000, size=0x10000)
         self.bind(ico, 'mem', mem, 'input')
+        self.bind(ico, 'mem2', mem2, 'input')
         
         host = pulp.snitch.snitch_core.Spatz(self, 'host', isa='rv32imfdcv')
 

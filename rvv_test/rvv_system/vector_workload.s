@@ -11,14 +11,16 @@ main:
 	sw	s0,12(sp)
 	addi	s0,sp,16
 
-VLEN  		= 16
-ADDRESS		= 12345
+VLEN1  		= 16
+VLEN2  		= 8
+ADDRESS1		= 0x10
+ADDRESS2		= 0x10000000
 
-	li				a2,6*VLEN
+	li				a2,6*VLEN1
 
 # fill memory with values #
 	li				a0,0					
-	li				a1,ADDRESS				
+	li				a1,ADDRESS1				
 .L1:
 	fcvt.s.w		fa0,a0					
 	addi			a0,a0,1					
@@ -26,35 +28,189 @@ ADDRESS		= 12345
 	addi			a1,a1,4					
 	bne				a2,a0,.L1
 
-# set vector length and element width #
-	li				a0,VLEN				
+# fill memory2 with values #
+	li				a0,0					
+	li				a1,ADDRESS2				
+.L2:
+	fcvt.s.w		fa0,a0					
+	addi			a0,a0,1					
+	fsw				fa0,(a1)				
+	addi			a1,a1,4					
+	bne				a2,a0,.L2
+
+	nop
+	nop
+	nop
+	nop
+
+# VLEN1 + ADDRESS1 #
+	# set vector length and element width #
+	li				a0,VLEN1				
 	vsetvli 		t0,a0,e32			
 
-	li				a1,ADDRESS
+	# set distance between 2 vectors #
+	li				a2,4*VLEN1
+
+	# load 2 vectors and add them #
+	li				a1,ADDRESS1
 	vle32.v 		v1,(a1)
-	li				a2,4*VLEN
 	add				a1,a1,a2		
 	vle32.v 		v2,(a1)
 	vfadd.vv		v1,v2,v1
 
+	# load 2 vectors and add them #
 	add				a1,a1,a2		
 	vle32.v 		v3,(a1)	
 	add				a1,a1,a2		
 	vle32.v 		v4,(a1)
 	vfadd.vv		v3,v4,v3
 
+	# load 2 vectors and add them #
 	add				a1,a1,a2		
 	vle32.v 		v5,(a1)
 	add				a1,a1,a2		
 	vle32.v 		v6,(a1)
 	vfadd.vv		v5,v6,v5
 
-	li				a1,0
+	# write back 3 vectors #
+	li				a1,ADDRESS1
 	vse32.v			v1,(a1)
 	add				a1,a1,a2
 	vse32.v			v3,(a1)
 	add				a1,a1,a2
 	vse32.v			v5,(a1)
+
+	nop
+	nop
+	nop
+	nop
+
+# VLEN2 + ADDRESS1 #
+	# set vector length and element width #
+	li				a0,VLEN2				
+	vsetvli 		t0,a0,e32			
+
+	# set distance between 2 vectors #
+	li				a2,4*VLEN2
+
+	# load 2 vectors and add them #
+	li				a1,ADDRESS1
+	vle32.v 		v1,(a1)
+	add				a1,a1,a2		
+	vle32.v 		v2,(a1)
+	vfadd.vv		v1,v2,v1
+
+	# load 2 vectors and add them #
+	add				a1,a1,a2		
+	vle32.v 		v3,(a1)	
+	add				a1,a1,a2		
+	vle32.v 		v4,(a1)
+	vfadd.vv		v3,v4,v3
+
+	# load 2 vectors and add them #
+	add				a1,a1,a2		
+	vle32.v 		v5,(a1)
+	add				a1,a1,a2		
+	vle32.v 		v6,(a1)
+	vfadd.vv		v5,v6,v5
+
+	# write back 3 vectors #
+	li				a1,ADDRESS1
+	vse32.v			v1,(a1)
+	add				a1,a1,a2
+	vse32.v			v3,(a1)
+	add				a1,a1,a2
+	vse32.v			v5,(a1)
+
+	nop
+	nop
+	nop
+	nop
+
+# VLEN1 + ADDRESS2 #
+	# set vector length and element width #
+	li				a0,VLEN1				
+	vsetvli 		t0,a0,e32			
+
+	# set distance between 2 vectors #
+	li				a2,4*VLEN1
+
+	# load 2 vectors and add them #
+	li				a1,ADDRESS2
+	vle32.v 		v1,(a1)
+	add				a1,a1,a2		
+	vle32.v 		v2,(a1)
+	vfadd.vv		v1,v2,v1
+
+	# load 2 vectors and add them #
+	add				a1,a1,a2		
+	vle32.v 		v3,(a1)	
+	add				a1,a1,a2		
+	vle32.v 		v4,(a1)
+	vfadd.vv		v3,v4,v3
+
+	# load 2 vectors and add them #
+	add				a1,a1,a2		
+	vle32.v 		v5,(a1)
+	add				a1,a1,a2		
+	vle32.v 		v6,(a1)
+	vfadd.vv		v5,v6,v5
+
+	# write back 3 vectors #
+	li				a1,ADDRESS2
+	vse32.v			v1,(a1)
+	add				a1,a1,a2
+	vse32.v			v3,(a1)
+	add				a1,a1,a2
+	vse32.v			v5,(a1)
+
+	nop
+	nop
+	nop
+	nop
+
+# VLEN2 + ADDRESS2 #
+	# set vector length and element width #
+	li				a0,VLEN2				
+	vsetvli 		t0,a0,e32			
+
+	# set distance between 2 vectors #
+	li				a2,4*VLEN2
+
+	# load 2 vectors and add them #
+	li				a1,ADDRESS2
+	vle32.v 		v1,(a1)
+	add				a1,a1,a2		
+	vle32.v 		v2,(a1)
+	vfadd.vv		v1,v2,v1
+
+	# load 2 vectors and add them #
+	add				a1,a1,a2		
+	vle32.v 		v3,(a1)	
+	add				a1,a1,a2		
+	vle32.v 		v4,(a1)
+	vfadd.vv		v3,v4,v3
+
+	# load 2 vectors and add them #
+	add				a1,a1,a2		
+	vle32.v 		v5,(a1)
+	add				a1,a1,a2		
+	vle32.v 		v6,(a1)
+	vfadd.vv		v5,v6,v5
+
+	# write back 3 vectors #
+	li				a1,ADDRESS2
+	vse32.v			v1,(a1)
+	add				a1,a1,a2
+	vse32.v			v3,(a1)
+	add				a1,a1,a2
+	vse32.v			v5,(a1)
+
+	nop
+	nop
+	nop
+	nop
+
 
 	li	a5,0
 	mv	a0,a5
