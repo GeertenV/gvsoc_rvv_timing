@@ -21,15 +21,26 @@ class Soc(gvsoc.systree.Component):
 
         binary = args.binary
 
-        ico = interco.router.Router(self, 'ico')#,bandwidth=512)#, latency=1)
+        ico = interco.router.Router(self, 'ico')
 
-        mem = memory.memory.Memory(self, 'mem', size=0x10000)#, width_log2= 1)
-        mem2 = memory.memory.Memory(self, 'mem2', size=0x10000)
-        
-        ico.add_mapping('mem', base=0x00000000, remove_offset=0x00000000, size=0x10000, latency = 1)
-        ico.add_mapping('mem2', base=0x10000000, remove_offset=0x10000000, size=0x10000)
+        mem = memory.memory.Memory(self, 'mem', size=0x10000000, width_log2=0)
+        ico.add_mapping('mem', base=0x00000000, remove_offset=0x00000000, size=0x10000000)
         self.bind(ico, 'mem', mem, 'input')
-        self.bind(ico, 'mem2', mem2, 'input')
+
+        fastest_mem = memory.memory.Memory(self, 'fastest_mem', size=0x10000, width_log2=0)
+        latency_mem = memory.memory.Memory(self, 'latency_mem', size=0x10000, width_log2=0)
+        narroww_mem = memory.memory.Memory(self, 'narroww_mem', size=0x10000, width_log2=4)
+        slowest_mem = memory.memory.Memory(self, 'slowest_mem', size=0x10000, width_log2=4)
+        
+        ico.add_mapping('fastest_mem', base=0x10000000, remove_offset=0x10000000, size=0x10000)
+        ico.add_mapping('latency_mem', base=0x10010000, remove_offset=0x10010000, size=0x10000, latency=2)
+        ico.add_mapping('narroww_mem', base=0x10020000, remove_offset=0x10020000, size=0x10000)
+        ico.add_mapping('slowest_mem', base=0x10030000, remove_offset=0x10030000, size=0x10000, latency=2)
+
+        self.bind(ico, 'fastest_mem', fastest_mem, 'input')
+        self.bind(ico, 'latency_mem', latency_mem, 'input')
+        self.bind(ico, 'narroww_mem', narroww_mem, 'input')
+        self.bind(ico, 'slowest_mem', slowest_mem, 'input')
         
         host = pulp.snitch.snitch_core.Spatz(self, 'host', isa='rv32imfdcv')
 
