@@ -23,14 +23,14 @@ class Soc(gvsoc.systree.Component):
 
         ico = interco.router.Router(self, 'ico')
 
-        mem = memory.memory.Memory(self, 'mem', size=0x10000000, width_log2=0)
+        mem = memory.memory.Memory(self, 'mem', size=0x10000000, width_log2=-1)
         ico.add_mapping('mem', base=0x00000000, remove_offset=0x00000000, size=0x10000000)
         self.bind(ico, 'mem', mem, 'input')
 
-        fastest_mem = memory.memory.Memory(self, 'fastest_mem', size=0x10000, width_log2=0)
-        latency_mem = memory.memory.Memory(self, 'latency_mem', size=0x10000, width_log2=0)
-        narroww_mem = memory.memory.Memory(self, 'narroww_mem', size=0x10000, width_log2=4)
-        slowest_mem = memory.memory.Memory(self, 'slowest_mem', size=0x10000, width_log2=4)
+        fastest_mem = memory.memory.Memory(self, 'fastest_mem', size=0x10000, width_log2=-1)
+        latency_mem = memory.memory.Memory(self, 'latency_mem', size=0x10000, width_log2=-1)
+        narroww_mem = memory.memory.Memory(self, 'narroww_mem', size=0x10000, width_log2=1)
+        slowest_mem = memory.memory.Memory(self, 'slowest_mem', size=0x10000, width_log2=0)
         
         ico.add_mapping('fastest_mem', base=0x10000000, remove_offset=0x10000000, size=0x10000)
         ico.add_mapping('latency_mem', base=0x10010000, remove_offset=0x10010000, size=0x10000, latency=2)
